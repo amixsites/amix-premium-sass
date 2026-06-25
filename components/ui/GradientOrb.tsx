@@ -47,13 +47,14 @@ export function GradientOrb({
 }
 
 export function FloatingParticles() {
+  // Deterministic particle positions to avoid hydration mismatch
   const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 4 + 2,
-    duration: Math.random() * 20 + 10,
-    delay: Math.random() * 5,
+    x: ((i * 37 + 13) % 100),
+    y: ((i * 53 + 7) % 100),
+    size: (i % 4) + 2,
+    duration: (i % 5) * 4 + 10,
+    delay: (i % 6) * 0.8,
   }));
 
   return (

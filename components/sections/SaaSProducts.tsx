@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import {
   GraduationCap,
   UtensilsCrossed,
@@ -14,6 +15,10 @@ import {
   Bell,
   FileText,
   Settings,
+  ShoppingBag,
+  Leaf,
+  Gift,
+  ExternalLink,
 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -35,6 +40,9 @@ const products = [
     color: "from-blue-500 to-indigo-500",
     bgColor: "bg-blue-50",
     borderColor: "border-blue-100",
+    iconColor: "text-blue-600",
+    image: "/school-erp.webp",
+    url: null,
   },
   {
     icon: UtensilsCrossed,
@@ -53,6 +61,9 @@ const products = [
     color: "from-orange-500 to-amber-500",
     bgColor: "bg-orange-50",
     borderColor: "border-orange-100",
+    iconColor: "text-orange-600",
+    image: "/restaurant-pos.png",
+    url: null,
   },
   {
     icon: CalendarDays,
@@ -71,6 +82,72 @@ const products = [
     color: "from-violet-500 to-purple-500",
     bgColor: "bg-violet-50",
     borderColor: "border-violet-100",
+    iconColor: "text-violet-600",
+    image: "/banquet-booking-software.jpg",
+    url: null,
+  },
+  {
+    icon: ShoppingBag,
+    name: "Maison Rose",
+    tagline: "Premium E-Commerce Store",
+    description:
+      "A beautifully crafted e-commerce experience for fashion and lifestyle brands with seamless checkout and inventory management.",
+    modules: [
+      { icon: ShoppingBag, label: "Product Catalog" },
+      { icon: CreditCard, label: "Payments" },
+      { icon: Users, label: "Customer Accounts" },
+      { icon: BarChart3, label: "Sales Analytics" },
+      { icon: Bell, label: "Order Tracking" },
+      { icon: Settings, label: "Store Config" },
+    ],
+    color: "from-rose-500 to-pink-500",
+    bgColor: "bg-rose-50",
+    borderColor: "border-rose-100",
+    iconColor: "text-rose-600",
+    image: "/maison-rose-web.png",
+    url: "https://maison-rose-six.vercel.app",
+  },
+  {
+    icon: Leaf,
+    name: "Shrikha Organics",
+    tagline: "Organic Products Storefront",
+    description:
+      "A clean, nature-inspired e-commerce platform built for organic and wellness brands to showcase and sell their products online.",
+    modules: [
+      { icon: Leaf, label: "Product Listings" },
+      { icon: ShoppingBag, label: "Shopping Cart" },
+      { icon: CreditCard, label: "Secure Checkout" },
+      { icon: Users, label: "User Profiles" },
+      { icon: FileText, label: "Blog & Content" },
+      { icon: Bell, label: "Offers & Alerts" },
+    ],
+    color: "from-emerald-500 to-green-500",
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-100",
+    iconColor: "text-emerald-600",
+    image: "/shrikha-organics-webPReview.png",
+    url: "https://shrikha-organics.netlify.app",
+  },
+  {
+    icon: Gift,
+    name: "CutieBox",
+    tagline: "Curated Gift Box Platform",
+    description:
+      "A delightful gifting platform where users can explore and order curated gift boxes for every occasion, with personalized options.",
+    modules: [
+      { icon: Gift, label: "Gift Curation" },
+      { icon: ShoppingBag, label: "Box Builder" },
+      { icon: CreditCard, label: "Payments" },
+      { icon: Users, label: "Accounts" },
+      { icon: Bell, label: "Notifications" },
+      { icon: BarChart3, label: "Analytics" },
+    ],
+    color: "from-fuchsia-500 to-pink-500",
+    bgColor: "bg-fuchsia-50",
+    borderColor: "border-fuchsia-100",
+    iconColor: "text-fuchsia-600",
+    image: "/cutiebox-WEbpreview-img.png",
+    url: "https://cutiebox.vercel.app",
   },
 ];
 
@@ -108,13 +185,7 @@ export function SaaSProducts() {
                           className={`w-14 h-14 rounded-2xl ${product.bgColor} flex items-center justify-center`}
                         >
                           <product.icon
-                            className={`w-7 h-7 ${
-                              product.name === "School ERP"
-                                ? "text-blue-600"
-                                : product.name === "Restaurant POS"
-                                ? "text-orange-600"
-                                : "text-violet-600"
-                            }`}
+                            className={`w-7 h-7 ${product.iconColor}`}
                           />
                         </div>
                         <div>
@@ -143,16 +214,28 @@ export function SaaSProducts() {
                           </motion.div>
                         ))}
                       </div>
+
+                      {product.url && (
+                        <a
+                          href={product.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 mt-6 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                        >
+                          View Live Site
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
 
-                    {/* Right: Dashboard Mockup */}
+                    {/* Right: Product Preview */}
                     <div className={index % 2 === 1 ? "lg:order-1" : ""}>
                       <motion.div
                         whileHover={{ y: -6, rotateX: 2 }}
                         transition={{ type: "spring", stiffness: 300 }}
                         className="rounded-2xl overflow-hidden shadow-2xl border border-slate-200/60 bg-white"
                       >
-                        {/* Dashboard Header */}
+                        {/* Browser Header */}
                         <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-100">
                           <div className="flex gap-1.5">
                             <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -162,57 +245,24 @@ export function SaaSProducts() {
                           <div className="flex-1 mx-4">
                             <div className="h-6 rounded-md bg-white border border-slate-200 flex items-center px-3">
                               <span className="text-[10px] text-slate-400">
-                                {product.name.toLowerCase().replace(/\s/g, "-")}.amix.app
+                                {product.url
+                                  ? product.url.replace("https://", "")
+                                  : `${product.name.toLowerCase().replace(/\s/g, "-")}.amix.app`}
                               </span>
                             </div>
                           </div>
                         </div>
 
-                        {/* Dashboard Content */}
-                        <div className="p-5 space-y-4">
-                          {/* Stats Row */}
-                          <div className="grid grid-cols-3 gap-3">
-                            {[1, 2, 3].map((i) => (
-                              <div
-                                key={i}
-                                className={`p-3 rounded-xl ${product.bgColor} border ${product.borderColor}`}
-                              >
-                                <div className="h-2 w-8 rounded bg-slate-200 mb-2" />
-                                <div className="h-5 w-12 rounded bg-slate-300" />
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Chart Area */}
-                          <div className="h-32 rounded-xl bg-slate-50 border border-slate-100 flex items-end gap-1 p-3">
-                            {Array.from({ length: 12 }, (_, i) => (
-                              <motion.div
-                                key={i}
-                                initial={{ height: 0 }}
-                                whileInView={{ height: `${Math.random() * 60 + 20}%` }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.03, duration: 0.4 }}
-                                className={`flex-1 rounded-t-sm bg-gradient-to-t ${product.color} opacity-70`}
-                              />
-                            ))}
-                          </div>
-
-                          {/* Table Preview */}
-                          <div className="space-y-2">
-                            {[1, 2, 3].map((i) => (
-                              <div
-                                key={i}
-                                className="flex items-center gap-3 p-2 rounded-lg bg-slate-50/50"
-                              >
-                                <div className="w-8 h-8 rounded-lg bg-slate-200" />
-                                <div className="flex-1 space-y-1.5">
-                                  <div className="h-2.5 w-24 rounded bg-slate-200" />
-                                  <div className="h-2 w-16 rounded bg-slate-100" />
-                                </div>
-                                <div className="h-6 w-16 rounded-md bg-slate-200" />
-                              </div>
-                            ))}
-                          </div>
+                        {/* Product Screenshot */}
+                        <div className="relative w-full bg-slate-50">
+                          <Image
+                            src={product.image}
+                            alt={`${product.name} preview`}
+                            width={800}
+                            height={500}
+                            className="w-full h-auto object-contain"
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                          />
                         </div>
                       </motion.div>
                     </div>

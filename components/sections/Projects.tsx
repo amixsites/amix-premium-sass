@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowUpRight, Monitor, Smartphone } from "lucide-react";
+import Image from "next/image";
+import { ExternalLink, ArrowUpRight, Monitor } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { GlassCard } from "@/components/ui/GlassCard";
 
 const projects = [
   {
@@ -15,7 +15,8 @@ const projects = [
     color: "from-pink-500 to-rose-400",
     bgColor: "bg-pink-50",
     iconColor: "text-pink-600",
-    stats: { products: "200+", customers: "1.2k" },
+    stats: { products: "45+", customers: "120+" },
+    image: "/cutiebox-WEbpreview-img.png",
   },
   {
     title: "Maison Rose",
@@ -26,7 +27,8 @@ const projects = [
     color: "from-rose-500 to-red-400",
     bgColor: "bg-rose-50",
     iconColor: "text-rose-600",
-    stats: { products: "500+", customers: "3.5k" },
+    stats: { products: "38+", customers: "95+" },
+    image: "/maison-rose-web.png",
   },
   {
     title: "Shrikha Organics",
@@ -37,7 +39,8 @@ const projects = [
     color: "from-emerald-500 to-green-400",
     bgColor: "bg-emerald-50",
     iconColor: "text-emerald-600",
-    stats: { products: "150+", customers: "800+" },
+    stats: { products: "30+", customers: "80+" },
+    image: "/shrikha-organics-webPReview.png",
   },
 ];
 
@@ -175,16 +178,15 @@ export function Projects() {
                         </div>
                       </div>
                       {/* Content Preview */}
-                      <div className="p-6 space-y-4">
-                        <div className="h-4 w-3/4 rounded bg-slate-100" />
-                        <div className="h-4 w-1/2 rounded bg-slate-100" />
-                        <div className="grid grid-cols-3 gap-3 mt-4">
-                          <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-100 to-slate-50" />
-                          <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-100 to-slate-50" />
-                          <div className="aspect-square rounded-xl bg-gradient-to-br from-slate-100 to-slate-50" />
-                        </div>
-                        <div className="h-3 w-full rounded bg-slate-100 mt-4" />
-                        <div className="h-3 w-2/3 rounded bg-slate-100" />
+                      <div className="relative w-full bg-slate-50">
+                        <Image
+                          src={project.image}
+                          alt={`${project.title} preview`}
+                          width={800}
+                          height={500}
+                          className="w-full h-auto object-contain"
+                          sizes="(max-width: 1024px) 100vw, 40vw"
+                        />
                       </div>
                     </motion.div>
                   </div>

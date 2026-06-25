@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { Zap, ArrowUpRight, Heart } from "lucide-react";
 
+// ─── DESKTOP FOOTER (unchanged) ─────────────────────────────────
+
 const footerLinks = {
   Services: [
     { label: "School ERP", href: "#services" },
@@ -28,16 +30,12 @@ const footerLinks = {
   ],
 };
 
-export function Footer() {
+function DesktopFooter() {
   return (
-    <footer className="relative bg-slate-900 text-white overflow-hidden">
-      {/* Top gradient border */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
-
+    <div className="hidden md:block">
       <div className="section-padding py-16 md:py-20">
         <div className="container-wide">
           <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8">
-            {/* Brand */}
             <div className="lg:col-span-2">
               <motion.a
                 href="#"
@@ -69,7 +67,6 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Links */}
             {Object.entries(footerLinks).map(([category, links]) => (
               <div key={category}>
                 <h4 className="text-sm font-semibold text-white mb-4">
@@ -92,7 +89,6 @@ export function Footer() {
             ))}
           </div>
 
-          {/* Bottom */}
           <div className="mt-16 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-slate-500">
               © {new Date().getFullYear()} Amix. All rights reserved.
@@ -103,6 +99,150 @@ export function Footer() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── MOBILE FOOTER ───────────────────────────────────────────────
+
+const products = [
+  { label: "School ERP", href: "#services" },
+  { label: "Restaurant POS", href: "#services" },
+  { label: "Banquet", href: "#services" },
+  { label: "Websites", href: "#services" },
+];
+
+const companyLinks = [
+  { label: "About", href: "#why-amix" },
+  { label: "Projects", href: "#projects" },
+  { label: "Process", href: "#process" },
+  { label: "Contact", href: "#contact" },
+];
+
+const productLinks = [
+  { label: "School ERP", href: "#products" },
+  { label: "Restaurant POS", href: "#products" },
+  { label: "Banquet Manager", href: "#products" },
+  { label: "Business Websites", href: "#services" },
+];
+
+function MobileFooter() {
+  return (
+    <div className="md:hidden px-5 pt-10 pb-6">
+      {/* Section 1 — Wordmark */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className="mb-7"
+      >
+        <h2 className="text-2xl font-bold text-white tracking-tight mb-2">
+          Amix
+        </h2>
+        <p className="text-slate-500 text-[13px] leading-relaxed max-w-[280px]">
+          Building software infrastructure for schools, restaurants, and modern businesses.
+        </p>
+      </motion.div>
+
+      {/* Section 2 — Product Rail */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.05 }}
+        className="mb-7 -mx-5 px-5 overflow-x-auto scrollbar-hide"
+      >
+        <div className="flex gap-2 w-max">
+          {products.map((product) => (
+            <a
+              key={product.label}
+              href={product.href}
+              className="px-3.5 py-1.5 rounded-full border border-slate-700/80 text-slate-400 text-xs font-medium whitespace-nowrap hover:border-slate-500 hover:text-slate-300 transition-colors"
+            >
+              {product.label}
+            </a>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Section 3 — Navigation Columns */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="grid grid-cols-2 gap-x-8 gap-y-0 mb-7"
+      >
+        <div>
+          <h4 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            Company
+          </h4>
+          <ul className="space-y-2.5">
+            {companyLinks.map((link) => (
+              <li key={link.label}>
+                <a href={link.href} className="text-[13px] text-slate-400 hover:text-white transition-colors">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            Products
+          </h4>
+          <ul className="space-y-2.5">
+            {productLinks.map((link) => (
+              <li key={link.label}>
+                <a href={link.href} className="text-[13px] text-slate-400 hover:text-white transition-colors">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
+
+      {/* Section 4 — Social Row */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+        className="flex items-center gap-5 mb-7"
+      >
+        {["Instagram", "LinkedIn", "GitHub"].map((name) => (
+          <a
+            key={name}
+            href="#"
+            className="text-xs text-slate-500 hover:text-white transition-colors"
+          >
+            {name}
+          </a>
+        ))}
+      </motion.div>
+
+      {/* Section 5 — Bottom */}
+      <div className="border-t border-slate-800/60 pt-5">
+        <p className="text-[11px] text-slate-600">
+          © {new Date().getFullYear()} Amix · Crafted in India ·{" "}
+          <a href="#" className="hover:text-slate-400 transition-colors">Privacy</a> ·{" "}
+          <a href="#" className="hover:text-slate-400 transition-colors">Terms</a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── EXPORT ──────────────────────────────────────────────────────
+
+export function Footer() {
+  return (
+    <footer className="relative bg-slate-900 text-white overflow-hidden">
+      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+      <DesktopFooter />
+      <MobileFooter />
     </footer>
   );
 }

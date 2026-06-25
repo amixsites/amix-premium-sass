@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   Search,
   Lightbulb,
@@ -71,9 +72,111 @@ const steps = [
   },
 ];
 
+/* ─── Mobile Swipe Carousel ─── */
+function MobileProcessCarousel() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = useCallback(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const scrollLeft = container.scrollLeft;
+    const cardWidth = container.offsetWidth * 0.82; // matches w-[82%]
+    const gap = 16; // gap-4 = 16px
+    const index = Math.round(scrollLeft / (cardWidth + gap));
+    setActiveIndex(Math.min(Math.max(index, 0), steps.length - 1));
+  }, []);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  const scrollToIndex = (index: number) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const cardWidth = container.offsetWidth * 0.82;
+    const gap = 16;
+    container.scrollTo({
+      left: index * (cardWidth + gap),
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <div className="mt-10">
+      {/* Scrollable cards */}
+      <div
+        ref={scrollRef}
+        className="flex gap-4 overflow-x-auto px-4 pb-4 snap-x snap-mandatory scrollbar-hide"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {steps.map((step, index) => (
+          <motion.div
+            key={step.title}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
+            className="snap-center flex-shrink-0 w-[82%]"
+          >
+            <div className="glass-card-strong rounded-2xl p-5 h-full">
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className={`w-10 h-10 rounded-xl ${step.bgColor} flex items-center justify-center flex-shrink-0`}
+                >
+                  <step.icon className="w-5 h-5 text-slate-700" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold text-indigo-500 uppercase tracking-wider">
+                    Step {index + 1}
+                  </span>
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                    {step.title}
+                  </h3>
+                </div>
+              </div>
+              <p className="text-slate-500 leading-relaxed text-sm">
+                {step.description}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Progress indicator */}
+      <div className="flex items-center justify-center gap-2 mt-4 px-4">
+        {steps.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => scrollToIndex(index)}
+            aria-label={`Go to step ${index + 1}`}
+            className={`transition-all duration-300 rounded-full ${
+              index === activeIndex
+                ? "w-6 h-2.5 bg-indigo-500"
+                : "w-2.5 h-2.5 bg-slate-300"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Swipe hint */}
+      <p className="text-center text-xs text-slate-400 mt-3">
+        Swipe to explore all steps →
+      </p>
+    </div>
+  );
+}
+
 export function Process() {
   return (
-    <section id="process" className="relative py-24 md:py-32 bg-slate-50/50 overflow-hidden">
+    <section id="process" className="relative py-16 md:py-32 bg-slate-50/50 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-b from-indigo-50/50 to-transparent rounded-full blur-3xl" />
       </div>
@@ -86,8 +189,13 @@ export function Process() {
             description="A battle-tested 7-step process that ensures every project is delivered on time, on budget, and beyond expectations."
           />
 
-          {/* Timeline */}
-          <div className="mt-16 md:mt-20 relative">
+          {/* Mobile: Horizontal Swipe Carousel */}
+          <div className="md:hidden">
+            <MobileProcessCarousel />
+          </div>
+
+          {/* Desktop: Timeline (unchanged) */}
+          <div className="hidden md:block mt-16 md:mt-20 relative">
             {/* Vertical Line - Desktop */}
             <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-200 via-violet-200 to-indigo-200" />
 

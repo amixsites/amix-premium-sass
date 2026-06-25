@@ -10,6 +10,7 @@ import { TechStack } from "@/components/sections/TechStack";
 import { WhyAmix } from "@/components/sections/WhyAmix";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       <WhyAmix />
       <Contact />
       <Footer />
+      <WhatsAppButton />
     </main>
   );
 }

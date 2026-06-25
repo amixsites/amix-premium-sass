@@ -7,7 +7,7 @@ import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 const stats = [
   {
     icon: Briefcase,
-    value: 50,
+    value: 25,
     suffix: "+",
     label: "Projects Completed",
     description: "Successfully delivered across industries",
@@ -16,7 +16,7 @@ const stats = [
   },
   {
     icon: Users,
-    value: 30,
+    value: 18,
     suffix: "+",
     label: "Clients Served",
     description: "Trusted by businesses worldwide",
@@ -34,7 +34,7 @@ const stats = [
   },
   {
     icon: Building2,
-    value: 100,
+    value: 40,
     suffix: "+",
     label: "Businesses Supported",
     description: "Empowered with digital solutions",
