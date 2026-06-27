@@ -70,7 +70,7 @@ export function Navbar() {
 
             {/* CTA Buttons */}
             <div className="hidden lg:flex items-center gap-3">
-              <MagneticButton variant="ghost" size="sm" href="tel:+919876543210">
+              <MagneticButton variant="ghost" size="sm" href="tel:+919246891902">
                 Call Us
               </MagneticButton>
               <MagneticButton variant="primary" size="sm" href="#contact">
@@ -121,7 +121,7 @@ export function Navbar() {
                 <MagneticButton
                   variant="outline"
                   size="lg"
-                  href="tel:+919876543210"
+                  href="tel:+919246891902"
                   className="w-full"
                 >
                   Call Us

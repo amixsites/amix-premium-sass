@@ -15,10 +15,6 @@ import {
   Bell,
   FileText,
   Settings,
-  ShoppingBag,
-  Leaf,
-  Gift,
-  ExternalLink,
 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -42,7 +38,6 @@ const products = [
     borderColor: "border-blue-100",
     iconColor: "text-blue-600",
     image: "/school-erp.webp",
-    url: null,
   },
   {
     icon: UtensilsCrossed,
@@ -63,7 +58,6 @@ const products = [
     borderColor: "border-orange-100",
     iconColor: "text-orange-600",
     image: "/restaurant-pos.png",
-    url: null,
   },
   {
     icon: CalendarDays,
@@ -84,70 +78,6 @@ const products = [
     borderColor: "border-violet-100",
     iconColor: "text-violet-600",
     image: "/banquet-booking-software.jpg",
-    url: null,
-  },
-  {
-    icon: ShoppingBag,
-    name: "Maison Rose",
-    tagline: "Premium E-Commerce Store",
-    description:
-      "A beautifully crafted e-commerce experience for fashion and lifestyle brands with seamless checkout and inventory management.",
-    modules: [
-      { icon: ShoppingBag, label: "Product Catalog" },
-      { icon: CreditCard, label: "Payments" },
-      { icon: Users, label: "Customer Accounts" },
-      { icon: BarChart3, label: "Sales Analytics" },
-      { icon: Bell, label: "Order Tracking" },
-      { icon: Settings, label: "Store Config" },
-    ],
-    color: "from-rose-500 to-pink-500",
-    bgColor: "bg-rose-50",
-    borderColor: "border-rose-100",
-    iconColor: "text-rose-600",
-    image: "/maison-rose-web.png",
-    url: "https://maison-rose-six.vercel.app",
-  },
-  {
-    icon: Leaf,
-    name: "Shrikha Organics",
-    tagline: "Organic Products Storefront",
-    description:
-      "A clean, nature-inspired e-commerce platform built for organic and wellness brands to showcase and sell their products online.",
-    modules: [
-      { icon: Leaf, label: "Product Listings" },
-      { icon: ShoppingBag, label: "Shopping Cart" },
-      { icon: CreditCard, label: "Secure Checkout" },
-      { icon: Users, label: "User Profiles" },
-      { icon: FileText, label: "Blog & Content" },
-      { icon: Bell, label: "Offers & Alerts" },
-    ],
-    color: "from-emerald-500 to-green-500",
-    bgColor: "bg-emerald-50",
-    borderColor: "border-emerald-100",
-    iconColor: "text-emerald-600",
-    image: "/shrikha-organics-webPReview.png",
-    url: "https://shrikha-organics.netlify.app",
-  },
-  {
-    icon: Gift,
-    name: "CutieBox",
-    tagline: "Curated Gift Box Platform",
-    description:
-      "A delightful gifting platform where users can explore and order curated gift boxes for every occasion, with personalized options.",
-    modules: [
-      { icon: Gift, label: "Gift Curation" },
-      { icon: ShoppingBag, label: "Box Builder" },
-      { icon: CreditCard, label: "Payments" },
-      { icon: Users, label: "Accounts" },
-      { icon: Bell, label: "Notifications" },
-      { icon: BarChart3, label: "Analytics" },
-    ],
-    color: "from-fuchsia-500 to-pink-500",
-    bgColor: "bg-fuchsia-50",
-    borderColor: "border-fuchsia-100",
-    iconColor: "text-fuchsia-600",
-    image: "/cutiebox-WEbpreview-img.png",
-    url: "https://cutiebox.vercel.app",
   },
 ];
 
@@ -214,18 +144,6 @@ export function SaaSProducts() {
                           </motion.div>
                         ))}
                       </div>
-
-                      {product.url && (
-                        <a
-                          href={product.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 mt-6 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
-                        >
-                          View Live Site
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
                     </div>
 
                     {/* Right: Product Preview */}
@@ -245,9 +163,7 @@ export function SaaSProducts() {
                           <div className="flex-1 mx-4">
                             <div className="h-6 rounded-md bg-white border border-slate-200 flex items-center px-3">
                               <span className="text-[10px] text-slate-400">
-                                {product.url
-                                  ? product.url.replace("https://", "")
-                                  : `${product.name.toLowerCase().replace(/\s/g, "-")}.amix.app`}
+                                {`${product.name.toLowerCase().replace(/\s/g, "-")}.amix.app`}
                               </span>
                             </div>
                           </div>
