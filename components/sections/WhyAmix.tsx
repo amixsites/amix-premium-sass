@@ -204,8 +204,8 @@ function ParallaxCard({ reason, index, scrollProgress, activeIndex, totalCards }
       {/* Active card highlight border */}
       <motion.div
         className="absolute inset-0 rounded-3xl border-2 pointer-events-none"
+        style={{ borderColor: reason.glowColor }}
         animate={{
-          borderColor: isActive ? reason.glowColor : "transparent",
           opacity: isActive ? 1 : 0,
         }}
         transition={{ duration: 0.3 }}
