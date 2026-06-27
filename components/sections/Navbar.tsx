@@ -62,11 +62,11 @@ export function Navbar() {
           <nav
             className={`pointer-events-auto container-wide max-w-5xl mx-auto transition-all duration-700 ease-out ${
               isScrolled
-                ? "bg-white/70 backdrop-blur-2xl shadow-[0_8px_32px_-8px_rgba(0,0,0,0.08),0_2px_8px_-2px_rgba(0,0,0,0.04)] border border-white/60"
+                ? "bg-white/65 backdrop-blur-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.08)] border border-white/60"
                 : "bg-white/40 backdrop-blur-xl border border-white/30"
-            } rounded-2xl`}
+            } rounded-full`}
           >
-            <div className="flex items-center justify-between h-14 md:h-16 px-4 md:px-6">
+            <div className="flex items-center justify-between h-[72px] px-5 md:px-7">
               {/* Logo */}
               <motion.a
                 href="#"
@@ -115,8 +115,9 @@ export function Navbar() {
                 </motion.a>
                 <motion.a
                   href="#contact"
-                  className="px-4 py-2 text-[13px] font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 transition-all duration-300 flex items-center gap-1.5"
-                  whileHover={{ scale: 1.03 }}
+                  className="px-5 py-2.5 text-[13px] font-semibold text-white rounded-full shadow-[0_10px_30px_rgba(37,99,235,0.25)] hover:shadow-[0_15px_40px_rgba(37,99,235,0.3)] transition-all duration-300 flex items-center gap-1.5"
+                  style={{ background: "linear-gradient(135deg, #2563EB, #0EA5E9)" }}
+                  whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                 >
                   Start a Project
@@ -218,7 +219,8 @@ export function Navbar() {
                 <a
                   href="#contact"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full px-5 py-3 text-center text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl shadow-lg shadow-indigo-600/20 hover:shadow-xl transition-all"
+                  className="w-full px-5 py-3 text-center text-sm font-semibold text-white rounded-full shadow-[0_10px_30px_rgba(37,99,235,0.2)] transition-all"
+                  style={{ background: "linear-gradient(135deg, #2563EB, #0EA5E9)" }}
                 >
                   Start a Project
                 </a>

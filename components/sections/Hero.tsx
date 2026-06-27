@@ -4,18 +4,35 @@ import { useEffect, useRef, useState, Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, BarChart3, Users, Calendar, Shield, TrendingUp, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  TrendingUp,
+  Users,
+  Rocket,
+  BarChart3,
+  CheckCircle2,
+  Activity,
+  Zap,
+} from "lucide-react";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { TiltCard } from "@/components/ui/TiltCard";
 
-// Lazy load WebGL scene — only on client, only when needed
 const HeroScene = lazy(() => import("@/components/three/HeroScene"));
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// ─── Data ───────────────────────────────────────────────────────────────────────
+// ─── Floating Card Data ─────────────────────────────────────────────────────────
+const floatingCards = [
+  { icon: Users, text: "500+ Active Users", position: "top-2 -right-6", delay: 0 },
+  { icon: TrendingUp, text: "Revenue +42%", position: "top-28 -right-10", delay: 0.15 },
+  { icon: Rocket, text: "New Project Created", position: "-bottom-2 -right-4", delay: 0.3 },
+  { icon: Zap, text: "AI Analytics", position: "bottom-20 -left-8", delay: 0.45 },
+  { icon: CheckCircle2, text: "Deployment Successful", position: "top-12 -left-6", delay: 0.6 },
+];
+
+// ─── Service Badges ─────────────────────────────────────────────────────────────
 const serviceBadges = [
   { label: "School ERP", icon: "🎓" },
   { label: "Restaurant POS", icon: "🍽️" },
@@ -24,125 +41,83 @@ const serviceBadges = [
   { label: "Websites", icon: "🌐" },
 ];
 
-const floatingCards = [
-  { icon: BarChart3, label: "Analytics", value: "↑ 24%", color: "text-emerald-600", bg: "bg-emerald-50", x: "right-0 top-4", delay: 0 },
-  { icon: Users, label: "Users", value: "1,247", color: "text-blue-600", bg: "bg-blue-50", x: "right-12 top-32", delay: 0.15 },
-  { icon: Calendar, label: "Bookings", value: "89", color: "text-violet-600", bg: "bg-violet-50", x: "right-4 bottom-24", delay: 0.3 },
-  { icon: Shield, label: "Uptime", value: "99.9%", color: "text-amber-600", bg: "bg-amber-50", x: "left-0 bottom-8", delay: 0.45 },
-];
-
-// ─── Hero Component ─────────────────────────────────────────────────────────────
+// ─── Hero ───────────────────────────────────────────────────────────────────────
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const dashboardRef = useRef<HTMLDivElement>(null);
-  const [isWebGLReady, setIsWebGLReady] = useState(false);
-
+  const [sceneReady, setSceneReady] = useState(false);
   const mouse = useMousePosition(sectionRef as React.RefObject<HTMLElement>);
 
-  // ─── GSAP Cinematic Entrance Timeline ──────────────────────────────────────
+  // ─── GSAP Cinematic Entrance ────────────────────────────────────────────────
   useEffect(() => {
     if (!sectionRef.current) return;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.2 });
+      const tl = gsap.timeline({ delay: 0.3 });
 
-      // Background gradient reveal
+      // Background gradient blobs
       tl.fromTo(
-        ".hero-bg",
-        { opacity: 0, scale: 1.1 },
-        { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" }
+        ".hero-blob",
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 1.2, stagger: 0.15, ease: "power2.out" }
       );
 
-      // Headline lines reveal — staggered from bottom
+      // Headline lines
       tl.fromTo(
-        ".hero-headline-line",
-        { opacity: 0, y: 60, rotateX: -15 },
+        ".hero-line",
+        { opacity: 0, y: 50, clipPath: "inset(0 0 100% 0)" },
         {
           opacity: 1,
           y: 0,
-          rotateX: 0,
-          duration: 0.9,
+          clipPath: "inset(0 0 0% 0)",
+          duration: 0.8,
           stagger: 0.1,
-          ease: "power4.out",
+          ease: "power3.out",
         },
-        "-=0.6"
+        "-=0.7"
       );
 
-      // Description
+      // Description + Buttons
       tl.fromTo(
-        ".hero-description",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+        ".hero-fade",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" },
         "-=0.4"
       );
 
-      // Buttons
-      tl.fromTo(
-        ".hero-buttons",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
-        "-=0.3"
-      );
-
-      // Service badges stagger
-      tl.fromTo(
-        ".hero-badge",
-        { opacity: 0, scale: 0.8, y: 10 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.05,
-          ease: "back.out(2)",
-        },
-        "-=0.3"
-      );
-
-      // Dashboard entrance
+      // Dashboard scales in
       tl.fromTo(
         ".hero-dashboard",
-        { opacity: 0, x: 80, rotateY: -10 },
-        { opacity: 1, x: 0, rotateY: 0, duration: 1, ease: "power3.out" },
-        "-=0.8"
+        { opacity: 0, scale: 0.95, y: 30 },
+        { opacity: 1, scale: 1, y: 0, duration: 1, ease: "power3.out" },
+        "-=0.6"
       );
 
-      // Floating cards fly in
+      // Floating cards slide in
       tl.fromTo(
-        ".hero-float-card",
-        { opacity: 0, y: 40, scale: 0.85 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: "power3.out",
-        },
+        ".hero-float",
+        { opacity: 0, y: 20, scale: 0.9 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.5)" },
         "-=0.5"
       );
 
-      // WebGL scene fade in
-      tl.add(() => setIsWebGLReady(true), "-=0.6");
+      // Enable WebGL after entrance
+      tl.add(() => setSceneReady(true), "-=0.4");
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  // ─── GSAP ScrollTrigger — Parallax on scroll ──────────────────────────────
+  // ─── GSAP ScrollTrigger — Parallax ─────────────────────────────────────────
   useEffect(() => {
     if (!sectionRef.current) return;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
     const ctx = gsap.context(() => {
-      // Content fades out and moves up on scroll
-      gsap.to(".hero-content-left", {
-        y: -60,
+      gsap.to(".hero-left", {
+        y: -50,
         opacity: 0,
         ease: "none",
         scrollTrigger: {
@@ -153,9 +128,9 @@ export function Hero() {
         },
       });
 
-      // Dashboard moves slower (parallax depth)
       gsap.to(".hero-dashboard", {
-        y: 80,
+        y: 60,
+        scale: 0.96,
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -165,11 +140,9 @@ export function Hero() {
         },
       });
 
-      // Floating cards separate on scroll
-      gsap.to(".hero-float-card", {
-        y: (i) => 30 + i * 20,
-        x: (i) => (i % 2 === 0 ? 20 : -20),
-        opacity: 0.4,
+      gsap.to(".hero-float", {
+        y: (i) => 20 + i * 12,
+        opacity: 0.3,
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -184,73 +157,47 @@ export function Hero() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden"
-    >
-      {/* ─── Background ─── */}
-      <div className="hero-bg absolute inset-0 pointer-events-none">
-        {/* Gradient mesh */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_20%_30%,rgba(99,102,241,0.08),transparent),radial-gradient(ellipse_60%_40%_at_80%_20%,rgba(139,92,246,0.06),transparent),radial-gradient(ellipse_50%_50%_at_50%_80%,rgba(99,102,241,0.04),transparent)]" />
-
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(99,102,241,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.6) 1px, transparent 1px)`,
-            backgroundSize: "80px 80px",
-          }}
-        />
-
-        {/* Ambient orbs */}
-        <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-indigo-200/15 rounded-full blur-[120px] animate-float" />
-        <div className="absolute top-[30%] right-[0%] w-[500px] h-[500px] bg-violet-200/10 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[5%] left-[25%] w-[400px] h-[400px] bg-indigo-100/15 rounded-full blur-[80px]" />
+    <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden bg-white">
+      {/* ─── Background — Soft Apple-style gradient blobs ─── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="hero-blob absolute top-[-10%] right-[-5%] w-[700px] h-[700px] bg-blue-100/40 rounded-full blur-[120px]" />
+        <div className="hero-blob absolute bottom-[-15%] left-[-10%] w-[600px] h-[600px] bg-sky-100/35 rounded-full blur-[100px]" />
+        <div className="hero-blob absolute top-[30%] left-[40%] w-[400px] h-[400px] bg-slate-50 rounded-full blur-[80px]" />
       </div>
 
-      {/* ─── WebGL Scene (behind content) ─── */}
-      <div className="absolute inset-0 pointer-events-none opacity-60">
-        {isWebGLReady && (
+      {/* ─── Subtle WebGL ambient layer ─── */}
+      <div className="absolute inset-0 pointer-events-none opacity-50">
+        {sceneReady && (
           <Suspense fallback={null}>
-            <HeroScene
-              mouseX={mouse.normalizedX}
-              mouseY={mouse.normalizedY}
-              className="w-full h-full"
-            />
+            <HeroScene mouseX={mouse.normalizedX} mouseY={mouse.normalizedY} className="w-full h-full" />
           </Suspense>
         )}
       </div>
 
       {/* ─── Content ─── */}
-      <div className="relative z-10 section-padding pt-32 pb-20 md:pt-36 md:pb-28 w-full">
+      <div className="relative z-10 section-padding pt-32 pb-16 md:pt-36 md:pb-24 w-full">
         <div className="container-wide">
-          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-12 lg:gap-8 items-center">
-            {/* ─── Left: Typography + CTAs ─── */}
-            <div className="hero-content-left max-w-xl">
-              {/* Headline with per-line reveal */}
-              <div ref={headlineRef} className="perspective-1000">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-bold tracking-tight leading-[1.05]">
-                  <span className="hero-headline-line block text-slate-900">Building</span>
-                  <span className="hero-headline-line block text-slate-900">Digital Products</span>
-                  <span className="hero-headline-line block">
-                    <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
-                      That Scale
-                    </span>
-                  </span>
-                </h1>
-              </div>
+          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-16 items-center">
 
-              {/* Description */}
-              <p className="hero-description mt-6 text-lg text-slate-500 leading-relaxed max-w-md">
-                We engineer custom SaaS applications, ERP systems, and business platforms that grow with your company.
+            {/* ─── LEFT — Typography + CTAs ─── */}
+            <div className="hero-left max-w-xl">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold tracking-tight leading-[0.95] text-[#0F172A]">
+                <span className="hero-line block">Build software</span>
+                <span className="hero-line block">that moves</span>
+                <span className="hero-line block text-[#2563EB]">business forward.</span>
+              </h1>
+
+              <p className="hero-fade mt-6 text-lg text-[#64748B] leading-relaxed max-w-md">
+                We engineer custom SaaS platforms, ERP systems, and digital products trusted by businesses across industries.
               </p>
 
               {/* Buttons */}
-              <div className="hero-buttons mt-8 flex flex-wrap gap-3">
+              <div className="hero-fade mt-8 flex flex-wrap gap-3">
                 <motion.a
                   href="#contact"
-                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl shadow-lg shadow-indigo-600/20 hover:shadow-xl hover:shadow-indigo-600/30 transition-all duration-300"
-                  whileHover={{ scale: 1.03, y: -2 }}
+                  className="group inline-flex items-center gap-2.5 px-7 py-4 text-[15px] font-semibold text-white rounded-full shadow-[0_15px_40px_rgba(37,99,235,0.25)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.3)] transition-all duration-300"
+                  style={{ background: "linear-gradient(135deg, #2563EB, #0EA5E9)" }}
+                  whileHover={{ scale: 1.03, y: -4 }}
                   whileTap={{ scale: 0.97 }}
                 >
                   Start Your Project
@@ -258,7 +205,7 @@ export function Hero() {
                 </motion.a>
                 <motion.a
                   href="#projects"
-                  className="inline-flex items-center gap-2.5 px-7 py-3.5 text-[15px] font-semibold text-slate-700 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-2xl hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-sm"
+                  className="inline-flex items-center gap-2.5 px-7 py-4 text-[15px] font-semibold text-[#0F172A] bg-white border border-slate-200 rounded-full hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 shadow-sm"
                   whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                 >
@@ -267,15 +214,15 @@ export function Hero() {
               </div>
 
               {/* Service Badges */}
-              <div className="mt-10">
-                <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
+              <div className="hero-fade mt-10">
+                <p className="text-xs font-medium text-[#64748B] uppercase tracking-wider mb-3">
                   What we build
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {serviceBadges.map((badge) => (
                     <span
                       key={badge.label}
-                      className="hero-badge inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white/70 border border-slate-200/60 rounded-lg backdrop-blur-sm hover:border-indigo-200 hover:text-indigo-600 transition-colors duration-200 cursor-default"
+                      className="hero-fade inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200/80 rounded-lg hover:border-blue-200 hover:text-blue-600 transition-colors duration-200 cursor-default"
                     >
                       <span>{badge.icon}</span>
                       {badge.label}
@@ -285,120 +232,144 @@ export function Hero() {
               </div>
             </div>
 
-            {/* ─── Right: Interactive Dashboard ─── */}
-            <div
-              ref={dashboardRef}
-              className="hero-dashboard relative hidden lg:block"
-              style={{ perspective: "1200px" }}
-            >
-              {/* Main Dashboard Card */}
-              <TiltCard className="p-6" glowColor="rgba(99, 102, 241, 0.1)">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-5">
+            {/* ─── RIGHT — Premium SaaS Dashboard ─── */}
+            <div className="hero-dashboard relative hidden lg:block" style={{ perspective: "1200px" }}>
+              <TiltCard
+                className="p-7"
+                glowColor="rgba(37, 99, 235, 0.08)"
+                maxTilt={5}
+                scale={1.01}
+              >
+                {/* Dashboard Header */}
+                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-600/20">
-                      <TrendingUp className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] flex items-center justify-center shadow-lg shadow-blue-600/20">
+                      <BarChart3 className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-900">Business Dashboard</h3>
-                      <p className="text-[11px] text-slate-400">Real-time overview</p>
+                      <h3 className="text-sm font-bold text-[#0F172A]">Revenue Analytics</h3>
+                      <p className="text-[11px] text-[#64748B]">Real-time business overview</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-medium text-emerald-700">Live</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[11px] font-semibold text-emerald-700">Live</span>
                   </div>
                 </div>
 
-                {/* Mini metrics */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                {/* Metrics Row */}
+                <div className="grid grid-cols-4 gap-3 mb-5">
                   {[
-                    { label: "Revenue", value: "₹4.2L", change: "+12%" },
-                    { label: "Orders", value: "284", change: "+8%" },
-                    { label: "Active", value: "1.2K", change: "+24%" },
+                    { label: "Active Users", value: "1,247", change: "+24%", icon: Users },
+                    { label: "Revenue", value: "₹8.4L", change: "+42%", icon: TrendingUp },
+                    { label: "Growth", value: "67%", change: "+12%", icon: Activity },
+                    { label: "Projects", value: "32", change: "+5", icon: Rocket },
                   ].map((m) => (
-                    <div key={m.label} className="p-3 rounded-xl bg-slate-50/80 border border-slate-100/60">
-                      <p className="text-[10px] text-slate-400 mb-0.5">{m.label}</p>
-                      <p className="text-base font-bold text-slate-900">{m.value}</p>
-                      <span className="text-[10px] font-medium text-emerald-600">{m.change}</span>
+                    <div key={m.label} className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
+                      <m.icon className="w-3.5 h-3.5 text-[#2563EB] mb-1.5" />
+                      <p className="text-[10px] text-[#64748B]">{m.label}</p>
+                      <p className="text-lg font-bold text-[#0F172A] leading-tight">{m.value}</p>
+                      <span className="text-[10px] font-semibold text-emerald-600">{m.change}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Chart */}
-                <div className="h-24 rounded-xl bg-gradient-to-br from-slate-50 to-indigo-50/30 border border-slate-100/60 flex items-end gap-[3px] p-3 pt-5">
-                  {[30, 50, 35, 70, 45, 80, 55, 75, 50, 88, 65, 78, 70, 92].map((h, i) => (
+                <div className="h-32 rounded-xl bg-gradient-to-br from-slate-50 to-blue-50/30 border border-slate-100 flex items-end gap-[4px] p-4 pt-8 mb-5">
+                  {[28, 45, 35, 65, 42, 78, 55, 82, 48, 90, 62, 85, 70, 95, 75, 88].map((h, i) => (
                     <motion.div
                       key={i}
                       initial={{ height: 0 }}
                       animate={{ height: `${h}%` }}
-                      transition={{ delay: 1.5 + i * 0.04, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                      className="flex-1 rounded-sm bg-gradient-to-t from-indigo-500/80 to-violet-400/50"
+                      transition={{ delay: 1.4 + i * 0.03, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      className="flex-1 rounded-t bg-gradient-to-t from-[#2563EB] to-[#0EA5E9] opacity-75"
                     />
+                  ))}
+                </div>
+
+                {/* Activity Timeline */}
+                <div className="space-y-2.5">
+                  {[
+                    { text: "New user registered", time: "2m ago", dot: "bg-blue-500" },
+                    { text: "Payment received ₹12,500", time: "5m ago", dot: "bg-emerald-500" },
+                    { text: "Project deployed to production", time: "12m ago", dot: "bg-violet-500" },
+                  ].map((item) => (
+                    <div key={item.text} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-50/60">
+                      <div className={`w-2 h-2 rounded-full ${item.dot} flex-shrink-0`} />
+                      <p className="text-[11px] text-[#0F172A] font-medium flex-1">{item.text}</p>
+                      <span className="text-[10px] text-[#64748B]">{item.time}</span>
+                    </div>
                   ))}
                 </div>
               </TiltCard>
 
-              {/* Floating satellite cards */}
+              {/* ─── Floating Cards ─── */}
               {floatingCards.map((card, i) => (
                 <motion.div
-                  key={card.label}
-                  className={`hero-float-card absolute ${card.x}`}
+                  key={card.text}
+                  className={`hero-float absolute ${card.position}`}
                   animate={{
-                    y: [0, i % 2 === 0 ? -10 : 10, 0],
-                    x: [0, i % 2 === 0 ? 4 : -4, 0],
+                    y: [0, i % 2 === 0 ? -8 : 8, 0],
+                    rotate: [0, i % 2 === 0 ? 1.5 : -1.5, 0],
                   }}
-                  transition={{
-                    duration: 4 + i,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  transition={{ duration: 5 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <div className="bg-white/90 backdrop-blur-xl rounded-xl p-3 border border-white/60 shadow-lg shadow-slate-900/5">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-7 h-7 rounded-lg ${card.bg} flex items-center justify-center`}>
-                        <card.icon className={`w-3.5 h-3.5 ${card.color}`} />
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-semibold text-slate-900">{card.label}</p>
-                        <p className="text-[10px] text-slate-400">{card.value}</p>
-                      </div>
+                  <div className="bg-white/90 backdrop-blur-xl rounded-xl px-4 py-2.5 border border-white/70 shadow-[0_8px_24px_rgba(0,0,0,0.06)] flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                      <card.icon className="w-3.5 h-3.5 text-[#2563EB]" />
                     </div>
+                    <span className="text-[11px] font-semibold text-[#0F172A] whitespace-nowrap">{card.text}</span>
                   </div>
                 </motion.div>
               ))}
 
-              {/* Ambient glow */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-br from-indigo-200/25 to-violet-200/15 rounded-full blur-[60px] -z-10" />
+              {/* Ambient glow behind dashboard */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-blue-100/25 rounded-full blur-[80px] -z-10" />
             </div>
 
-            {/* ─── Mobile Dashboard ─── */}
+            {/* ─── MOBILE Dashboard ─── */}
             <div className="lg:hidden">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.7 }}
-                className="bg-white/70 backdrop-blur-xl rounded-2xl p-5 border border-white/60 shadow-xl"
+                className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-100 shadow-xl"
               >
                 <div className="flex items-center gap-2.5 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center">
-                    <TrendingUp className="w-4 h-4 text-white" />
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] flex items-center justify-center">
+                    <BarChart3 className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Dashboard</h3>
-                    <p className="text-[10px] text-slate-400">Live metrics</p>
+                    <h3 className="text-sm font-bold text-[#0F172A]">Revenue Analytics</h3>
+                    <p className="text-[10px] text-[#64748B]">Live dashboard</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {floatingCards.map((card) => (
-                    <div key={card.label} className={`p-2.5 rounded-xl ${card.bg} text-center`}>
-                      <card.icon className={`w-3.5 h-3.5 mx-auto ${card.color} mb-1`} />
-                      <p className="text-[10px] font-bold text-slate-900">{card.value}</p>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[
+                    { label: "Active Users", value: "1,247", change: "+24%" },
+                    { label: "Revenue", value: "₹8.4L", change: "+42%" },
+                    { label: "Growth", value: "67%", change: "+12%" },
+                    { label: "Projects", value: "32", change: "+5" },
+                  ].map((m) => (
+                    <div key={m.label} className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                      <p className="text-[10px] text-[#64748B]">{m.label}</p>
+                      <p className="text-base font-bold text-[#0F172A]">{m.value}</p>
+                      <span className="text-[10px] font-semibold text-emerald-600">{m.change}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Mobile floating badges */}
+                <div className="mt-4 flex gap-2">
+                  {floatingCards.slice(0, 3).map((card) => (
+                    <div key={card.text} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-100 rounded-lg shadow-sm">
+                      <card.icon className="w-3 h-3 text-[#2563EB]" />
+                      <span className="text-[9px] font-medium text-[#0F172A]">{card.text}</span>
                     </div>
                   ))}
                 </div>
               </motion.div>
             </div>
+
           </div>
         </div>
       </div>
